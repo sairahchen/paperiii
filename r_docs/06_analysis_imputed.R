@@ -1916,6 +1916,7 @@ make_covars_matrix_cr <- function(dataframe){
 
 a <- make_covars_matrix_cr(imputedLong100LungTotalMortality)
 
+
 # Modeling competing risk in mi data 
 
 # Breast
