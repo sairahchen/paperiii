@@ -386,16 +386,6 @@ vectorize_pooled_results <- function(model_results){
   
 }
 
-run_model_no_format <- function(model, dataset){
-  message("Running model: ", model$fullname)
-  formula_str = paste(model$outcome_str , "~", paste0(model$predictors, collapse=" + "))
-  list_results <- dataset %>% group_by(.imp) %>% do(model = coxph(as.formula(formula_str), data = . )) %>%
-    model$filter() %>% 
-    as.list() 
-
-  
-}
-
 
 
 # Breast cancer models ----
@@ -1915,6 +1905,7 @@ make_covars_matrix_cr <- function(dataframe){
 }
 
 a <- make_covars_matrix_cr(imputedLong100LungTotalMortality)
+
 
 
 # Modeling competing risk in mi data 

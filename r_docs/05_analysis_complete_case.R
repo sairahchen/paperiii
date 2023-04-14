@@ -150,7 +150,7 @@ templates <- list(
     return(m)
   },
   c.hliTertiles = function(m){
-    m$predictors %<>% c("hliTertiles")
+    m$predictors %<>% c("hliTertilesLevels")
     m$names %<>% c("hliTert")
     return(m)
   },
@@ -429,6 +429,17 @@ breast_cat_result_values <- make_template_values(breast_cat_results)
 names(breast_cat_result_values) <- paste0("cat.", names(breast_cat_result_values))
 
 
+breast_tert_models <- list(base_model) %>% 
+  parallel_apply(templates[c("d.bccohort")]) %>%
+  parallel_apply(templates[c("o.totalDeath", "o.breastDeath")]) %>% 
+  serial_apply(templates[c("c.hliTertiles", "c.tnmstage", "c.bcvars")]) %>% 
+  parallel_apply(templates[c("f.all", "f.prediag5", "f.qtoexit5")]) 
+
+breast_tert_results <- breast_tert_models %>% lapply(run_model, dataset=breast)
+breast_tert_results %<>% lapply(result_prep_tpl)
+breast_tert_result_values <- make_template_values(breast_tert_results)
+names(breast_tert_result_values) <- paste0("cat.", names(breast_tert_result_values))
+
 
 breast_x1y_cat_models <- list(base_model) %>% 
   parallel_apply(templates[c("d.bccohort")]) %>%
@@ -516,6 +527,18 @@ colorectal_cat_result_values <- make_template_values(colorectal_cat_results)
 names(colorectal_cat_result_values) <- paste0("cat.", names(colorectal_cat_result_values))
 
 
+colorectal_tert_models <- list(base_model) %>% 
+  parallel_apply(templates[c("d.crccohort")]) %>%
+  parallel_apply(templates[c("o.totalDeath", "o.colorectalDeath")]) %>% 
+  serial_apply(templates[c("c.hliTertiles", "c.seerstage")]) %>% 
+  parallel_apply(templates[c("f.all", "f.prediag5", "f.qtoexit5")]) 
+
+colorectal_tert_results <- colorectal_tert_models %>% lapply(run_model, dataset=colorectal)
+colorectal_tert_results %<>% lapply(result_prep_tpl)
+colorectal_tert_result_values <- make_template_values(colorectal_tert_results)
+names(colorectal_tert_result_values) <- paste0("cat.", names(colorectal_tert_result_values))
+
+
 colorectal_x1y_cat_models <- list(base_model) %>% 
   parallel_apply(templates[c("d.crccohort")]) %>%
   parallel_apply(templates[c("o.exclude1YearTotalDeath", "o.exclude1YearColorectalDeath")]) %>% 
@@ -600,6 +623,17 @@ lung_cat_results %<>% lapply(result_prep_tpl)
 lung_cat_result_values <- make_template_values(lung_cat_results)
 names(lung_cat_result_values) <- paste0("cat.", names(lung_cat_result_values))
 
+lung_tert_models <- list(base_model) %>% 
+  parallel_apply(templates[c("d.lccohort")]) %>%
+  parallel_apply(templates[c("o.totalDeath", "o.lungDeath")]) %>% 
+  serial_apply(templates[c("c.hliTertiles", "c.seerstage")]) %>% 
+  parallel_apply(templates[c("f.all", "f.prediag5", "f.qtoexit5")]) 
+
+lung_tert_results <- lung_tert_models %>% lapply(run_model, dataset=lung)
+lung_tert_results %<>% lapply(result_prep_tpl)
+lung_tert_result_values <- make_template_values(lung_tert_results)
+names(lung_tert_result_values) <- paste0("cat.", names(lung_tert_result_values))
+
 lung_x1y_cat_models <- list(base_model) %>% 
   parallel_apply(templates[c("o.exclude1YearTotalDeath", "o.exclude1YearLungDeath")]) %>%
   parallel_apply(templates[c("o.totalDeath", "o.lungDeath")]) %>% 
@@ -647,12 +681,16 @@ all_result_values <- c(breast_result_values,
                        colorectal_X1Yr_result_values,
                        colorectal_X3Yr_result_values,
                        lung_X1Yr_result_values,
-                       lung_X3Yr_result_values)
+                       lung_X3Yr_result_values,
+                       breast_tert_result_values,
+                       colorectal_tert_result_values,
+                       lung_tert_result_values)
 
 
 
 updateOfficeTemplate("./output/table_4_template.docx", "./output/table_4.docx", update_values = all_result_values)
 updateOfficeTemplate("./output/table_6_template.docx", "./output/table_6.docx", update_values = all_result_values)
+updateOfficeTemplate("./output/table_14_template.docx", "./output/table_14.docx", update_values = all_result_values)
 
 # HLI excluding single factors ----
 
@@ -1243,7 +1281,7 @@ lung_td_rcs_plot <- ggplot(rms:::Predict(lung_td_rcs_model, hliScore=seq(1, 20),
   ggtitle("LC, all-cause, 5 knots")
 
 
-lung_lcd_rcs_model <- cph(Surv(followUpTimeDays, lungDeath) ~ rcs(hliScore, 5) + 
+lung_lcd_rcs_model <- cph(Surv(followUpTimeDays, lungDeath) ~ rcs(hliScore, 3) + 
                            ageDiagnosis + 
                            education + 
                            height +

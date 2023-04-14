@@ -945,7 +945,8 @@ find_hli_categories <- function(dataframe){
 find_hli_categories_levels <- function(dataframe){
   
   dataframe %>%
-    mutate(hliCategoriesLevels = factor(hliCategories, labels = 1:4)
+    mutate(hliCategoriesLevels = factor(hliCategories, labels = 1:4),
+           hliTertilesLevels = factor(hliTertiles, labels = 1:3)
     )
   
 }
