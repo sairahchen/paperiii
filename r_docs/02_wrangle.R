@@ -1,7 +1,7 @@
 
 
 # load data
-df <- read.csv("./data/22032023.csv")
+df <- read.csv("./data/20042023.csv")
 
 
 # convert all colnames to lowercase
@@ -429,10 +429,15 @@ calculateGrRedMeat <- function(dataframe){
 
 df <- calculateGrRedMeat(df)
 
+
+
 calculateGrProcessedMeat <- function(dataframe){
   return(
     dataframe %>%
-      mutate(gramsProcessedMeat = case_when(
+      mutate(gramsMeatPaalegg = case_when(serienr<46 ~ grkjotpa,
+                                          serienr >= 46 ~ grmkjotpa_new + grfkjotpa_new + grleverp_new,
+                                          TRUE ~ NA_real_),
+             gramsProcessedMeat = case_when(
         is.na(fqsteik) &
           is.na(fqkotele) &
           is.na(fqbiff) &
@@ -447,7 +452,7 @@ calculateGrProcessedMeat <- function(dataframe){
                     is.na(grpolse), 
                     0, 
                     grpolse) + 
-                  grkjotpa)
+                  gramsMeatPaalegg)
       ))
   )
 }
