@@ -1325,7 +1325,7 @@ bc_td_lagintx_rcs_delta <- intEST(var2values = c(0:25),
 
 bc_td_lagintx_rcs_plot <- ggplot(bc_td_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) + 
-  geom_hline(yintercept=1, colour = "grey", linetype="dashed", size=0.75) +
+  geom_hline(yintercept=1, colour = "grey", linetype="dashed", linewidth=0.75) +
   theme_minimal(base_size = 12) +
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +
@@ -1378,7 +1378,7 @@ bc_bcd_lagintx_rcs_delta <- intEST(var2values = c(0:25),
 
 bc_bcd_lagintx_rcs_plot <- ggplot(bc_bcd_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) + 
-  geom_hline(yintercept=1, colour = "grey", linetype="dashed", size=0.75) +
+  geom_hline(yintercept=1, colour = "grey", linetype="dashed", linewidth=0.75) +
   theme_minimal(base_size = 12) +
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +
@@ -1402,7 +1402,7 @@ crc_td_lagintx_rcs_delta <- intEST(var2values = c(0:25),
                                    ci=TRUE, conf = 0.95, ci.method = "delta")
 crc_td_lagintx_rcs_plot <- ggplot(crc_td_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) +
-  geom_hline(yintercept=1, colour = "grey", linetype="dashed", size=0.75) +
+  geom_hline(yintercept=1, colour = "grey", linetype="dashed", linewidth=0.75) +
     theme_minimal(base_size = 12) +
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +
@@ -1425,7 +1425,7 @@ crc_crcd_lagintx_rcs_delta <- intEST(var2values = c(0:25),
                                    ci=TRUE, conf = 0.95, ci.method = "delta")
 crc_crcd_lagintx_rcs_plot <- ggplot(crc_crcd_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) + 
-  geom_hline(yintercept=1, colour = "grey", linetype="dashed", size=0.75) +
+  geom_hline(yintercept=1, colour = "grey", linetype="dashed", crc_td_lagintx_rcs_plot=0.75) +
   theme_minimal(base_size = 12) +
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +
@@ -1449,7 +1449,7 @@ lc_td_lagintx_rcs_delta <- intEST(var2values = c(0:25),
                                    ci=TRUE, conf = 0.95, ci.method = "delta")
 lc_td_lagintx_rcs_plot <- ggplot(lc_td_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) + 
-  geom_hline(yintercept=1, colour = "grey", linetype="dashed", size=0.75) +
+  geom_hline(yintercept=1, colour = "grey", linetype="dashed", linewidth=0.75) +
   theme_minimal(base_size = 12) +
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +
@@ -1473,7 +1473,7 @@ lc_lcd_lagintx_rcs_delta <- intEST(var2values = c(0:25),
                                   ci=TRUE, conf = 0.95, ci.method = "delta")
 lc_lcd_lagintx_rcs_plot <- ggplot(lc_lcd_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) + 
-  geom_hline(yintercept=1, colour = "grey", linetype="dashed", size=0.75) +
+  geom_hline(yintercept=1, colour = "grey", linetype="dashed", linewidth=0.75) +
   theme_minimal(base_size = 12) +
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +

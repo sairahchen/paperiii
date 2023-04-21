@@ -14,7 +14,7 @@ table_1 <-
          gramsAlcohol,
          dietScore,
          hliScore,
-         hliCategoriesLevels,
+         hliTertilesLevels,
          educationLowHigh,
          menopausalStatus,
          hrtStatus,
@@ -38,7 +38,7 @@ table_1 <-
       gramsAlcohol ~ "Alcohol intake (grams/day)",
       dietScore ~ "Diet score (0-4)",
       hliScore ~ "HLI score",
-      hliCategoriesLevels ~ "HLI quartiles",
+      hliTertilesLevels ~ "HLI tertiles",
       educationLowHigh ~ "Education (years)",
       menopausalStatus ~ "Menopausal status",
       hrtStatus ~ "Hormone replacement therapy status",
@@ -132,41 +132,42 @@ table_2 %>%
 # Kaplan Meier curves
 
 ## Breast cancer survivors
-fit_breast <- survfit(Surv(followUpTimeYears, totalDeath) ~ hliCategoriesLevels, data = breast)
+fit_breast <- survfit(Surv(followUpTimeYears, totalDeath) ~ hliTertiles, data = breast)
 km_breast <- ggsurvplot(fit_breast,
                         xlab = "Years since diagnosis",
-                        legend.labs = c("3-9", "10-12", "13-14", "15-20"),
-                        legend.title = "HLI quartile",
-                        linetype = c("dotted", "solid", "solid", "dotted"),
-                        palette = c("black", "darkgrey", "black", "darkgrey"),
-                        censor=F)+
-  guides(colour = guide_legend(nrow = 2)) 
+                        legend.labs = c("0-10", "11-14", "15-20"),
+                        legend.title = "HLI tertile",
+                        linetype = c("dotted", "solid", "dashed"),
+                        palette = c("black", "black", "black"),
+                        censor=F)
+  #guides(colour = guide_legend(nrow = 2))
+
 
 
 
 ## Colorectal cancer survivors
-fit_colorectal <- survfit(Surv(followUpTimeYears, totalDeath) ~ hliCategories, data = colorectal)
+fit_colorectal <- survfit(Surv(followUpTimeYears, totalDeath) ~ hliTertiles, data = colorectal)
 km_colorectal <- ggsurvplot(fit_colorectal,
                             xlab = "Years since diagnosis",
-                            legend.labs = c("3-9", "10-12", "13-14", "15-20"),
-                            legend.title = "HLI quartile",
-                            linetype = c("dotted", "solid", "solid", "dotted"),
-                            palette = c("black", "darkgrey", "black", "darkgrey"),
-                            censor=F) +
-  guides(colour = guide_legend(nrow = 2))
+                            legend.labs = c("0-10", "11-14", "15-20"),
+                            legend.title = "HLI tertile",
+                            linetype = c("dotted", "solid", "dashed"),
+                            palette = c("black", "black", "black"),                            
+                            censor=F) 
+  #guides(colour = guide_legend(nrow = 2))
                             
 
 
 ## Lung cancer survivors
-fit_lung <- survfit(Surv(followUpTimeYears, totalDeath) ~ hliCategories, data = lung)
+fit_lung <- survfit(Surv(followUpTimeYears, totalDeath) ~ hliTertiles, data = lung)
 km_lung <- ggsurvplot(fit_lung,
                       xlab = "Years since diagnosis",
-                      legend.labs = c("2-8", "9-10", "11-12", "13-20"),
+                      legend.labs = c("0-9", "10-12", "13-20"),
                       legend.title = "HLI quartile",
-                      linetype = c("dotted", "solid", "solid", "dotted"),
-                      palette = c("black", "darkgrey", "black", "darkgrey"),
-                      censor=F) +
-  guides(colour = guide_legend(nrow = 2))
+                      linetype = c("dotted", "solid", "dashed"),
+                      palette = c("black", "black", "black"),
+                      censor=F) 
+  #guides(colour = guide_legend(nrow = 2))
   #labs(tag="C. Lung")
 
 
@@ -174,7 +175,7 @@ ggarrange(km_breast$plot, km_colorectal$plot, km_lung$plot,
           ncol=3,
           widths = c(1,1,1))
 ggsave("./output/figure_1.jpeg",
-       width = 32, height = 20, units = "cm") # play with the width and height to get it right. Almost there...:)
+       width = 32, height = 15, units = "cm") # play with the width and height to get it right. Almost there...:)
 
 
 
@@ -202,10 +203,10 @@ survival_table_5_10 <- function(dataframe){
   survival_table <- tbl_survfit(
     list(
       survfit(Surv(followUpTimeDays, totalDeath) ~ 1, dataframe),
-      survfit(Surv(followUpTimeDays, totalDeath) ~ hliCategoriesLevels, dataframe)
+      survfit(Surv(followUpTimeDays, totalDeath) ~ hliTertilesLevels, dataframe)
     ),
     times = c(1826.25,3652.5),
-    label = hliCategoriesLevels ~ "HLI quartile",
+    label = hliTertilesLevels ~ "HLI quartile",
     label_header = "{time/365.25} Year"
   )
   
@@ -234,10 +235,10 @@ survival_table_5 <- function(dataframe){
   survival_table <- tbl_survfit(
     list(
       survfit(Surv(followUpTimeDays, totalDeath) ~ 1, dataframe),
-      survfit(Surv(followUpTimeDays, totalDeath) ~ hliCategoriesLevels, dataframe)
+      survfit(Surv(followUpTimeDays, totalDeath) ~ hliTertilesLevels, dataframe)
     ),
     times = c(1826.25),
-    label = hliCategoriesLevels ~ "HLI quartile",
+    label = hliTertilesLevels ~ "HLI quartile",
     label_header = "{time/365.25} Year"
   ) 
   
