@@ -174,6 +174,12 @@ c.hliContinuous = function(m){
     
     return(m)
   },
+c.hliTertiles = function(m){
+  m$predictors %<>% c("hliTertilesLevels")
+  m$names %<>% c("ter")
+  
+  return(m)
+},
   c.tnmstage = function(m){
     m$predictors %<>% c("strata(tnmAnatomicStage)") # Used for breast cancer
     return(m)
@@ -401,6 +407,190 @@ bc_td_model_mi <- list(base_model) %>%
 bc_td_results_mi <-  bc_td_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastTotalMortality)
 bc_td_results_mi %<>% lapply(vectorize_pooled_results)
 
+### HLI tertiles
+bc_td_ter_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.bccohort")]) %>%
+  parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.bcvars", "c.tnmstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+bc_td_ter_results_mi <- bc_td_ter_model_mi %>% lapply(run_model_mi, dataset=imputedLong100BreastTotalMortality)
+bc_td_ter_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+## Breast cancer mortality ----
+### HLI continuous 
+bc_bcd_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.bccohort")]) %>%
+  parallel_apply(templates_mi[c("o.breastDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliContinuous", "c.bcvars", "c.tnmstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+bc_bcd_results_mi <-  bc_bcd_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastCancerMortality)
+bc_bcd_results_mi %<>% lapply(vectorize_pooled_results)
+
+### HLI tertiles 
+bc_bcd_ter_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.bccohort")]) %>%
+  parallel_apply(templates_mi[c("o.breastDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.bcvars", "c.tnmstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+bc_bcd_ter_results_mi <- bc_bcd_ter_model_mi %>% lapply(run_model_mi, dataset=imputedLong100BreastCancerMortality)
+bc_bcd_ter_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+## Total mortality ----
+### HLI continuous 
+crc_td_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.crccohort")]) %>%
+  parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliContinuous", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+crc_td_results_mi <- crc_td_model_mi %>% lapply(run_model_mi, dataset= imputedLong100ColorectalTotalMortality)
+crc_td_results_mi %<>% lapply(vectorize_pooled_results)
+
+### HLI categorical 
+crc_td_ter_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.crccohort")]) %>%
+  parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+crc_td_ter_results_mi <- crc_td_ter_model_mi %>% lapply(run_model_mi, dataset=imputedLong100ColorectalTotalMortality)
+crc_td_ter_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+
+## Colorectal cancer mortality ----
+
+### HLI continuous 
+crc_crcd_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.crccohort")]) %>%
+  parallel_apply(templates_mi[c("o.colorectalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliContinuous", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+crc_crcd_results_mi <-  crc_crcd_model_mi %>% lapply(run_model_mi, dataset= imputedLong100ColorectalCancerMortality)
+crc_crcd_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+
+### HLI categorical 
+crc_crcd_ter_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.crccohort")]) %>%
+  parallel_apply(templates_mi[c("o.colorectalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+crc_crcd_ter_results_mi <- crc_crcd_ter_model_mi %>% lapply(run_model_mi, dataset=imputedLong100ColorectalCancerMortality)
+crc_crcd_ter_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+# Lung cancer models ----
+## Total mortality ----
+### HLI continuous 
+lc_td_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.lccohort")]) %>%
+  parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliContinuous", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+lc_td_results_mi <- lc_td_model_mi %>% lapply(run_model_mi, dataset= imputedLong100LungTotalMortality)
+lc_td_results_mi %<>% lapply(vectorize_pooled_results)
+
+### HLI categorical 
+lc_td_ter_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.lccohort")]) %>%
+  parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+lc_td_ter_results_mi <- lc_td_ter_model_mi %>% lapply(run_model_mi, dataset=lungQD2yr)
+lc_td_ter_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+## Lung cancer mortality ----
+
+### HLI continuous 
+lc_lcd_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.lccohort")]) %>%
+  parallel_apply(templates_mi[c("o.lungDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliContinuous", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+lc_lcd_results_mi <- lc_lcd_model_mi %>% lapply(run_model_mi, dataset= imputedLong100LungCancerMortality)
+lc_lcd_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+### HLI categorical 
+lc_lcd_ter_model_mi <- list(base_model) %>% 
+  parallel_apply(templates_mi[c("mi.lccohort")]) %>%
+  parallel_apply(templates_mi[c("o.lungDeath")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.seerstage")]) %>% 
+  parallel_apply(templates_mi[c("f.all")]) 
+
+
+lc_lcd_ter_results_mi <- lc_lcd_ter_model_mi %>% lapply(run_model_mi, dataset=imputedLong100LungCancerMortality)
+lc_lcd_ter_results_mi %<>% lapply(vectorize_pooled_results)
+
+
+main_results_mi <- c(bc_td_results_mi,
+                     bc_td_ter_results_mi,
+                     bc_bcd_results_mi,
+                     bc_bcd_ter_results_mi,
+                     crc_td_results_mi,
+                     crc_td_ter_results_mi,
+                     crc_crcd_results_mi,
+                     crc_crcd_ter_results_mi,
+                     lc_td_results_mi,
+                     lc_td_ter_results_mi,
+                     lc_lcd_results_mi,
+                     lc_lcd_ter_results_mi) %>%
+  unlist()
+
+
+
+
+
+updateOfficeTemplate("./output/table_15_template.docx", "./output/table_15.docx", update_values = main_results_mi)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 bc_td_x1Yr_model_mi <- list(base_model) %>% 
@@ -448,7 +638,7 @@ bc_td_cat_results_mi %<>% lapply(vectorize_pooled_results)
 bc_td_cat_x1Yr_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.bccohort")]) %>%
   parallel_apply(templates_mi[c("o.exclude1YearTotalDeath")]) %>% 
-  serial_apply(templates_mi[c("c.hliCategories", "c.bcvars", "c.tnmstage")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.bcvars", "c.tnmstage")]) %>% 
   parallel_apply(templates_mi[c("f.all")]) 
 
 
@@ -456,17 +646,6 @@ bc_td_cat_x1Yr_results_mi <-  bc_td_cat_x1Yr_model_mi %>% lapply(run_model_mi, d
 bc_td_cat_x1Yr_results_mi %<>% lapply(vectorize_pooled_results)
 
 
-## Breast cancer mortality ----
-### HLI continuous 
-bc_bcd_model_mi <- list(base_model) %>% 
-  parallel_apply(templates_mi[c("mi.bccohort")]) %>%
-  parallel_apply(templates_mi[c("o.breastDeath")]) %>% 
-  serial_apply(templates_mi[c("c.hliContinuous", "c.bcvars", "c.tnmstage")]) %>% 
-  parallel_apply(templates_mi[c("f.all")]) 
-
-
-bc_bcd_results_mi <-  bc_bcd_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastCancerMortality)
-bc_bcd_results_mi %<>% lapply(vectorize_pooled_results)
 
 bc_bcd_x1Yr_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.bccohort")]) %>%
@@ -498,21 +677,12 @@ bc_bcd_x3YrNew_model_mi <- list(base_model) %>%
 bc_bcd_x3YrNew_results_mi <-  bc_bcd_x3YrNew_model_mi %>% lapply(run_model_mi, dataset= breastX3YrNewCasesMi)
 bc_bcd_x3YrNew_results_mi %<>% lapply(vectorize_pooled_results)
 
-### HLI categorical 
-  bc_bcd_cat_model_mi <- list(base_model) %>% 
-  parallel_apply(templates_mi[c("mi.bccohort")]) %>%
-  parallel_apply(templates_mi[c("o.breastDeath")]) %>% 
-  serial_apply(templates_mi[c("c.hliCategories", "c.bcvars", "c.tnmstage")]) %>% 
-  parallel_apply(templates_mi[c("f.all")]) 
 
-
-bc_bcd_cat_results_mi <- bc_bcd_cat_model_mi %>% lapply(run_model_mi, dataset=imputedLong100BreastCancerMortality)
-bc_bcd_cat_results_mi %<>% lapply(vectorize_pooled_results)
 
 bc_bcd_cat_x1Yr_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.bccohort")]) %>%
   parallel_apply(templates_mi[c("o.exclude1YearBreastDeath")]) %>% 
-  serial_apply(templates_mi[c("c.hliCategories", "c.bcvars", "c.tnmstage")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.bcvars", "c.tnmstage")]) %>% 
   parallel_apply(templates_mi[c("f.all")]) 
 
 
@@ -775,7 +945,7 @@ lc_td_cat_results_mi %<>% lapply(vectorize_pooled_results)
 lc_td_cat_x1y_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort")]) %>%
   parallel_apply(templates_mi[c("o.exclude1YearTotalDeath")]) %>% 
-  serial_apply(templates_mi[c("c.hliCategories", "c.seerstage")]) %>% 
+  serial_apply(templates_mi[c("c.hliTertiles", "c.seerstage")]) %>% 
   parallel_apply(templates_mi[c("f.all")]) 
 
 
@@ -1439,6 +1609,7 @@ bc_td_young_model_mi <- list(base_model) %>%
 bc_td_young_results_mi <-  bc_td_young_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastTotalMortalityYoung) 
 bc_td_young_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 bc_td_old_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.bccohort.old")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1449,6 +1620,7 @@ bc_td_old_model_mi <- list(base_model) %>%
 bc_td_old_results_mi <-  bc_td_old_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastTotalMortalityOld) 
 bc_td_old_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 bc_bcd_young_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.bccohort.young")]) %>%
   parallel_apply(templates_mi[c("o.breastDeath")]) %>% 
@@ -1459,6 +1631,7 @@ bc_bcd_young_model_mi <- list(base_model) %>%
 bc_bcd_young_results_mi <-  bc_bcd_young_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastCancerMortalityYoung) 
 bc_bcd_young_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 bc_bcd_old_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.bccohort.old")]) %>%
   parallel_apply(templates_mi[c("o.breastDeath")]) %>% 
@@ -1470,7 +1643,7 @@ bc_bcd_old_results_mi <-  bc_bcd_old_model_mi %>% lapply(run_model_mi, dataset= 
 bc_bcd_old_results_mi %<>% lapply(vectorize_pooled_results)
 
     # colorectal
-
+Sys.sleep(2)
 crc_td_young_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.crccohort.young")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1481,6 +1654,7 @@ crc_td_young_model_mi <- list(base_model) %>%
 crc_td_young_results_mi <-  crc_td_young_model_mi %>% lapply(run_model_mi, dataset= imputedLong100BreastTotalMortalityYoung) 
 crc_td_young_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 crc_td_old_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.crccohort.old")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1491,6 +1665,7 @@ crc_td_old_model_mi <- list(base_model) %>%
 crc_td_old_results_mi <-  crc_td_old_model_mi %>% lapply(run_model_mi, dataset= imputedLong100ColorectalTotalMortalityOld) 
 crc_td_old_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 crc_crcd_young_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.crccohort.young")]) %>%
   parallel_apply(templates_mi[c("o.colorectalDeath")]) %>% 
@@ -1501,6 +1676,7 @@ crc_crcd_young_model_mi <- list(base_model) %>%
 crc_crcd_young_results_mi <-  crc_crcd_young_model_mi %>% lapply(run_model_mi, dataset= imputedLong100ColorectalCancerMortalityYoung) 
 crc_crcd_young_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 crc_crcd_old_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.crccohort.old")]) %>%
   parallel_apply(templates_mi[c("o.colorectalDeath")]) %>% 
@@ -1512,7 +1688,7 @@ crc_crcd_old_results_mi <-  crc_crcd_old_model_mi %>% lapply(run_model_mi, datas
 crc_crcd_old_results_mi %<>% lapply(vectorize_pooled_results)
 
 # lung
-
+Sys.sleep(2)
 lc_td_young_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort.young")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1523,6 +1699,7 @@ lc_td_young_model_mi <- list(base_model) %>%
 lc_td_young_results_mi <-  lc_td_young_model_mi %>% lapply(run_model_mi, dataset= imputedLong100LungTotalMortalityYoung) 
 lc_td_young_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 lc_td_old_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort.old")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1533,6 +1710,7 @@ lc_td_old_model_mi <- list(base_model) %>%
 lc_td_old_results_mi <-  lc_td_old_model_mi %>% lapply(run_model_mi, dataset= imputedLong100LungTotalMortalityOld) 
 lc_td_old_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 lc_lcd_young_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort.young")]) %>%
   parallel_apply(templates_mi[c("o.lungDeath")]) %>% 
@@ -1543,6 +1721,7 @@ lc_lcd_young_model_mi <- list(base_model) %>%
 lc_lcd_young_results_mi <-  lc_lcd_young_model_mi %>% lapply(run_model_mi, dataset= imputedLong100LungCancerMortalityYoung) 
 lc_lcd_young_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(2)
 lc_lcd_old_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort.old")]) %>%
   parallel_apply(templates_mi[c("o.lungDeath")]) %>% 
@@ -1626,7 +1805,65 @@ all_result_values_mi <- c(bc_td_results_mi,
   unlist()
 
 updateOfficeTemplate("./output/table_5_template.docx", "./output/table_5.docx", update_values = all_result_values_mi)
-updateOfficeTemplate("./output/table_7_template.docx", "./output/table_7.docx", update_values = all_result_values_mi)
+
+
+subgroup_result_values <- c(
+                          
+                          bc_td_tnmI_results_mi,
+                          bc_td_tnmII_results_mi,
+                          bc_td_tnmIII_results_mi,
+                          bc_td_tnmIV_results_mi,
+                          bc_td_tnmUnk_results_mi,
+                          bc_bcd_tnmI_results_mi,
+                          bc_bcd_tnmII_results_mi,
+                          bc_bcd_tnmIII_results_mi,
+                          bc_bcd_tnmIV_results_mi,
+                          bc_bcd_tnmUnk_results_mi,
+                          bc_td_2005_results_mi,
+                          bc_bcd_2005_results_mi,
+                          bc_td_pm_results_mi,
+                          bc_bcd_pm_results_mi,
+                          bc_td_prem_results_mi,
+                          bc_bcd_prem_results_mi,
+                          crc_td_seerLoc_results_mi,
+                          crc_td_seerReg_results_mi,
+                          crc_td_seerDis_results_mi,
+                          crc_td_seerUnk_results_mi,
+                          crc_crcd_seerLoc_results_mi,
+                          crc_crcd_seerReg_results_mi,
+                          crc_crcd_seerDis_results_mi,
+                          crc_crcd_seerUnk_results_mi,
+                          cc_td_results_mi,
+                          rc_td_results_mi,
+                          cc_crcd_results_mi,
+                          rc_crcd_results_mi,
+                          lc_td_seerLoc_results_mi,
+                          lc_td_seerReg_results_mi,
+                          lc_td_seerDis_results_mi,
+                          lc_td_seerUnk_results_mi,
+                          lc_lcd_seerLoc_results_mi,
+                          lc_lcd_seerReg_results_mi,
+                          lc_lcd_seerDis_results_mi,
+                          lc_lcd_seerUnk_results_mi,
+                          sclc_td_results_mi,
+                          nsclc_td_results_mi,
+                          sclc_lcd_results_mi,
+                          nsclc_lcd_results_mi,
+                          bc_td_erpos_results_mi,
+                          bc_bcd_erpos_results_mi,
+                          bc_td_erneg_results_mi,
+                          bc_bcd_erneg_results_mi,
+                          bc_td_erposprneg_results_mi,
+                          bc_bcd_erposprneg_results_mi,
+                          bc_td_tripleneg_results_mi,
+                          bc_bcd_tripleneg_results_mi,
+                          bc_td_her2enrich_results_mi,
+                          bc_bcd_her2enrich_results_mi
+) %>% 
+  unlist()
+
+
+updateOfficeTemplate("./output/table_7_template.docx", "./output/table_7.docx", update_values = subgroup_result_values)
 
 
 excluding_years_result_values <- c(
@@ -1689,6 +1926,7 @@ bc_bcd_excluding_model_mi <- list(base_model) %>%
 bc_bcd_excluding_results_mi <- bc_bcd_excluding_model_mi %>% lapply(run_model_mi, dataset=imputedLong100BreastCancerMortality)
 bc_bcd_excluding_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(5)
 crc_td_excluding_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.crccohort")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1700,6 +1938,7 @@ crc_td_excluding_model_mi <- list(base_model) %>%
 crc_td_excluding_results_mi <- crc_td_excluding_model_mi %>% lapply(run_model_mi, dataset=imputedLong100ColorectalTotalMortality)
 crc_td_excluding_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(5)
 crc_crcd_excluding_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.crccohort")]) %>%
   parallel_apply(templates_mi[c("o.colorectalDeath")]) %>% 
@@ -1711,6 +1950,7 @@ crc_crcd_excluding_model_mi <- list(base_model) %>%
 crc_crcd_excluding_results_mi <- crc_crcd_excluding_model_mi %>% lapply(run_model_mi, dataset=imputedLong100ColorectalCancerMortality)
 crc_crcd_excluding_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(5)
 lc_td_excluding_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort")]) %>%
   parallel_apply(templates_mi[c("o.totalDeath")]) %>% 
@@ -1722,6 +1962,7 @@ lc_td_excluding_model_mi <- list(base_model) %>%
 lc_td_excluding_results_mi <- lc_td_excluding_model_mi %>% lapply(run_model_mi, dataset=imputedLong100LungTotalMortality)
 lc_td_excluding_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(5)
 lc_lcd_excluding_model_mi <- list(base_model) %>% 
   parallel_apply(templates_mi[c("mi.lccohort")]) %>%
   parallel_apply(templates_mi[c("o.lungDeath")]) %>% 
@@ -1733,6 +1974,7 @@ lc_lcd_excluding_model_mi <- list(base_model) %>%
 lc_lcd_excluding_results_mi <- lc_lcd_excluding_model_mi %>% lapply(run_model_mi, dataset=imputedLong100LungCancerMortality)
 lc_lcd_excluding_results_mi %<>% lapply(vectorize_pooled_results)
 
+Sys.sleep(5)
 excluding_results_values_mi <- c(bc_td_excluding_results_mi,
                                  bc_bcd_excluding_results_mi,
                                  crc_td_excluding_results_mi,

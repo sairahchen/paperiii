@@ -21,19 +21,19 @@ fpstyle <- fpShapesGp(
 # set graphic element design
 own <- fpTxtGp()
 own # see parameters
-own <- fpTxtGp(label=gpar(cex=4.00),
+own <- fpTxtGp(label=gpar(cex=3.00),
                ticks = gpar(cex=2.00)) # change tabletext font
 
 ## Create tibble for forest plot
 fpdata <- tibble(
-  coef = c(0.95, # all cause mortality bc
+  coef = c(0.94, # all cause mortality bc
            0.97, # cancer mortality bc
-           0.98, # all cause mortality crc
+           0.97, # all cause mortality crc
            0.98, # cancer mortality crc
            1.00, # all cause mortality lc
            1.00 # cancer mortality lc
   ),
-  low = c(0.93,
+  low = c(0.92,
           0.94,
           0.95,
           0.96,
@@ -46,7 +46,7 @@ fpdata <- tibble(
            1.00,
            1.01,
            1.02,
-           1.02),
+           1.03),
   survival_cohort = c(
     "Breast cancer",
     "",
@@ -72,12 +72,12 @@ fpdata <- tibble(
     "1094",
     "961"),
   hr = c(
-    "0.95 (0.93-0.97)",
+    "0.94 (0.92-0.97)",
     "0.97 (0.94-1.00)",
-    "0.98 (0.95-1.00)",
-    "0.98 (0.96-1.01)",
+    "0.97 (0.95-1.00)",
+    "0.98 (0.95-1.01)",
     "1.00 (0.98-1.02)",
-    "1.00 (0.98-1.02)"
+    "1.00 (0.98-1.03)"
 ))
 
 
@@ -100,7 +100,7 @@ fpdata |>
                 hr = c("HR (95% CI)")) |>
   fp_set_style(align = "l")
 
-dev.copy(jpeg, "./output/submission/figure_2a.jpeg", units="in", width = 28, height = 10, res=1200)
+dev.copy(jpeg, "./output/submission/figure_2a.jpeg", units="in", width = 20, height = 8, res=800)
 dev.off()
 
 # Figure 4 - subgroup by cancer stage
@@ -137,28 +137,28 @@ fpstyle <- fpShapesGp(
 # set graphic element design
 own <- fpTxtGp()
 own # see parameters
-own <- fpTxtGp(label=gpar(cex=4.00),
+own <- fpTxtGp(label=gpar(cex=3.00),
                ticks = gpar(cex=2.00)) # change tabletext font
 
 ## Create tibble for forest plot
 
 
 fpdata <- tibble(
-  coef = c(0.94, # I all cause
-           0.98, # I bc 
+  coef = c(0.93, # I all cause
+           0.99, # I bc 
            0.95, # II all cause 
            0.97, # II bc
            1.00, # III all cause 
            0.98, # III bc
-           0.96, # IV all cause
+           0.93, # IV all cause
            0.97, # IV bc
            
            0.93, # Local all cause
            0.91, # Local crc
            0.98, # Regional all cause
-           0.98, # Regional crc
+           0.97, # Regional crc
            0.99, # Distant all cause
-           1.00, # Distant crc
+           0.99, # Distant crc
            
            0.94, # Local all cause
            0.96, # Local lc
@@ -169,14 +169,14 @@ fpdata <- tibble(
            
 
   ),
-  low = c(0.87,
-          0.87,
-          0.92,
+  low = c(0.89,
+          0.91,
+          0.91,
           0.93,
           0.93,
           0.90,
-          0.89,
-          0.89,
+          0.86,
+          0.90,
           
           0.86,
           0.76,
@@ -185,29 +185,29 @@ fpdata <- tibble(
           0.96,
           0.96,
           
-          0.86,
-          0.86,
+          0.87,
+          0.87,
           0.97,
           0.96,
           0.98,
-          0.97
+          0.98
          
           
   ),
   high = c(0.98,
            1.07,
-           0.99,
+           0.98,
            1.02,
-           1.07,
+           1.08,
            1.06,
-           1.04,
-           1.05,
+           1.01,
+           1.06,
            
            1.01,
            1.09,
            1.01,
            1.02,
-           1.03,
+           1.02,
            1.03,
            
            1.01,
@@ -313,28 +313,28 @@ fpdata <- tibble(
     "622",
     "591"),
   hr = c(
-    "0.94 (0.90-0.98)",
-    "0.98 (0.91-1.07)",
-    "0.95 (0.92-0.99)",
+    "0.93 (0.89-0.98)",
+    "0.99 (0.91-1.07)",
+    "0.95 (0.91-0.98)",
     "0.97 (0.93-1.02)",
-    "1.00 (0.93-1.07)",
+    "1.00 (0.93-1.08)",
     "0.98 (0.90-1.06)",
-    "0.96 (0.89-1.04)",
+    "0.93 (0.86-1.01)",
     "0.97 (0.89-1.05)",
 
     "0.93 (0.86-1.01)",
-    "0.91 (0.75-1.09)",
+    "0.91 (0.76-1.09)",
     "0.98 (0.94-1.01)",
-    "0.98 (0.93-1.02)",
+    "0.97 (0.93-1.02)",
+    "0.99 (0.96-1.02)",
     "0.99 (0.96-1.03)",
-    "1.00 (0.96-1.03)",
     
     "0.94 (0.87-1.01)",
     "0.96 (0.87-1.05)",
     "1.01 (0.97-1.06)",
     "1.01 (0.96-1.06)",
     "1.00 (0.98-1.03)",
-    "1.00 (0.97-1.03)")
+    "1.00 (0.98-1.03)")
 )
 
 fpdata |>
@@ -361,7 +361,7 @@ fpdata |>
 dev.copy(tiff, "./output/submission/figure_2b.tiff", width = 2000, height = 1600)
 dev.off()
 
-dev.copy(jpeg, "./output/submission/figure_2b.jpeg", units="in", width = 28, height = 20, res=900)
+dev.copy(jpeg, "./output/submission/figure_2b.jpeg", units="in", width = 28, height = 20, res=600)
 dev.off()
 
 

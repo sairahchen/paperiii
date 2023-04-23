@@ -115,7 +115,7 @@ find_follow_up_time_days <- function(dataframe){
                                     na.rm = TRUE),
          followUpTimeDays = as.numeric(dateExit - dateDiagnosis),
          followUpTimeDaysX1Year = followUpTimeDays - 365.25,
-         followUpTimeDaysX3Year = followUpTimeDays - 1095.75,
+         followUpTimeDaysX2Year = followUpTimeDays - 730.5,
          followUpTimeYears = followUpTimeDays/365.25,
          followUpTimeYears = followUpTimeDays/365.25,
          q_to_exit_years = as.numeric(dateExit - dateQuestionnaire)/365.25)
@@ -1106,10 +1106,14 @@ exclude_followUpTime <- function(dataframe, daysExcluded){
 
 breastX1Yr <- exclude_followUpTime(breast, 365.25)
 breastX3Yr <- exclude_followUpTime(breast, 1095.75)
+breastX2Yr <- exclude_followUpTime(breast, 730.5)
 colorectalX1Yr <- exclude_followUpTime(colorectal, 365.25)
 colorectalX3Yr <- exclude_followUpTime(colorectal, 1095.75)
+colorectalX2Yr <- exclude_followUpTime(colorectal, 730.5)
 lungX1Yr <- exclude_followUpTime(lung, 365.25)
 lungX3Yr <- exclude_followUpTime(lung, 1095.75)
+lungX2Yr <- exclude_followUpTime(lung, 730.5)
+
 
 # stop inclusion of new cases less than 3 years before end of study 
 

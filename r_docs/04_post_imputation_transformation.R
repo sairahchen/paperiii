@@ -171,6 +171,16 @@ breastX3YrNewCasesMi <- imputedLong100BreastTotalMortality %>% filter(dateDiagno
 colorectalX3YrNewCasesMi <- imputedLong100ColorectalTotalMortality %>% filter(dateDiagnosis <= "2017-12-31")
 lungX3YrNewCasesMi <- imputedLong100LungTotalMortality %>% filter(dateDiagnosis <= "2017-12-31")
 
+# exclude diagnosis soon after questionnaire
+
+exclude_Q_D <- function(dataframe, daysExcluded){
+  dataframe %>%
+    filter(dateExit > (dateQuestionnaire + 730.5))
+}
+
+breastQD2yr <- exclude_Q_D(imputedLong100BreastTotalMortality)
+lungQD2yr <- exclude_Q_D(imputedLong100LungTotalMortality)
+
 
 
 # Create dataframes for age before 63 and 63+

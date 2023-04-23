@@ -97,24 +97,24 @@ templates <- list(
     m$names %<>% c("x1ylcD")
     return(m)
   },
-  o.exclude3YearTotalDeath = function(m){
-    m$outcome_str <- "Surv(followUpTimeDaysX3Year,totalDeath)"
-    m$names %<>% c("x3yTd")
+  o.exclude2YearTotalDeath = function(m){
+    m$outcome_str <- "Surv(followUpTimeDaysX2Year,totalDeath)"
+    m$names %<>% c("x2yTd")
     return(m)
   },
-  o.exclude3YearBreastDeath = function(m){
-    m$outcome_str <- "Surv(followUpTimeDaysX3Year,breastDeath)"
-    m$names %<>% c("x3ybcD")
+  o.exclude2YearBreastDeath = function(m){
+    m$outcome_str <- "Surv(followUpTimeDaysX2Year,breastDeath)"
+    m$names %<>% c("x2ybcD")
     return(m)
   },
-  o.exclude3YearColorectalDeath = function(m){
-    m$outcome_str <- "Surv(followUpTimeDaysX3Year,colorectalDeath)"
-    m$names %<>% c("x3ycrcD")
+  o.exclude2YearColorectalDeath = function(m){
+    m$outcome_str <- "Surv(followUpTimeDaysX2Year,colorectalDeath)"
+    m$names %<>% c("x2ycrcD")
     return(m)
   },
-  o.exclude3YearLungDeath = function(m){
-    m$outcome_str <- "Surv(followUpTimeDaysX3Year,lungDeath)"
-    m$names %<>% c("x3ylcD")
+  o.exclude2YearLungDeath = function(m){
+    m$outcome_str <- "Surv(followUpTimeDaysX2Year,lungDeath)"
+    m$names %<>% c("x2ylcD")
     return(m)
   },
   
@@ -269,10 +269,22 @@ templates <- list(
     m$names %<>% c("x1y")
     return(m)
   },
-  f.exclude3Year = function(m){
+  f.excludeDiagtoEnd2Year = function(m){
     m$filter <- function(d){d %>% filter(
-      (dateDeath > (dateDiagnosis + 1095.75)) | is.na(dateDeath) )}
-    m$names %<>% c("x3y")
+      (dateExit > (dateDiagnosis + 730.5)) | is.na(dateDeath) )}
+    m$names %<>% c("xDExit2y")
+    return(m)
+  },
+  f.excludeQtoDiag2Year = function(m){
+    m$filter <- function(d){d %>% filter(
+      (dateDiagnosis > (dateQuestionnaire + 730.5)))}
+    m$names %<>% c("xQD2y")
+    return(m)
+  },
+  f.excludeQtoExit5Year = function(m){
+    m$filter <- function(d){d %>% filter(
+      (dateExit > (dateQuestionnaire + 1826.25)) | is.na(dateDeath) )}
+    m$names %<>% c("xQExit5y")
     return(m)
   },
   f.dbefore2005 = function(m){
@@ -330,43 +342,24 @@ breast_models <- list(base_model) %>%
     serial_apply(templates[c("c.hliContinuous", "c.tnmstage", "c.bcvars")]) %>% 
   parallel_apply(templates[c("f.all",
                              "f.dbefore2005", 
-                             "f.dafter2005")]) 
+                             "f.dafter2005",
+                             "f.excludeQtoExit5Year",
+                             "f.excludeQtoDiag2Year")]) 
 
 breast_results <- breast_models %>% lapply(run_model, dataset=breast)
 breast_results %<>% lapply(result_prep_tpl)
 breast_result_values <- make_template_values(breast_results) # apply to a list of models
 
-breast_results_stop3yr <- breast_models %>% lapply(run_model, dataset=breastX3YrNewCases)
-breast_results_stop3yr %<>% lapply(result_prep_tpl)
-breast_result_values_stop3yr <- make_template_values(breast_results_stop3yr) # apply to a list of models
 
-
-
-breast_X1Yr_models <- list(base_model) %>% 
+breast_X2Yr_models <- list(base_model) %>% 
   parallel_apply(templates[c("d.bccohort")]) %>%
-  parallel_apply(templates[c( 
-                             "o.exclude1YearTotalDeath", "o.exclude1YearBreastDeath"
- )]) %>% 
+  parallel_apply(templates[c("o.exclude2YearTotalDeath", "o.exclude2YearBreastDeath")]) %>% 
   serial_apply(templates[c("c.hliContinuous", "c.tnmstage", "c.bcvars")]) %>% 
-  parallel_apply(templates[c(
-                             "f.exclude1Year")]) 
+  parallel_apply(templates[c("f.excludeDiagtoEnd2Year")]) 
 
-breast_X1Yr_results <- breast_X1Yr_models %>% lapply(run_model, dataset=breastX1Yr)
-breast_X1Yr_results %<>% lapply(result_prep_tpl)
-breast_X1Yr_result_values <- make_template_values(breast_X1Yr_results)
-
-breast_X3Yr_models <- list(base_model) %>% 
-  parallel_apply(templates[c("d.bccohort")]) %>%
-  parallel_apply(templates[c( 
-    "o.exclude3YearTotalDeath", "o.exclude3YearBreastDeath"
-  )]) %>% 
-  serial_apply(templates[c("c.hliContinuous", "c.tnmstage", "c.bcvars")]) %>% 
-  parallel_apply(templates[c(
-    "f.exclude3Year")]) 
-
-breast_X3Yr_results <- breast_X3Yr_models %>% lapply(run_model, dataset=breastX3Yr)
-breast_X3Yr_results %<>% lapply(result_prep_tpl)
-breast_X3Yr__result_values <- make_template_values(breast_X3Yr_results)
+breast_X2Yr_results <- breast_X2Yr_models %>% lapply(run_model, dataset=breast)
+breast_X2Yr_results %<>% lapply(result_prep_tpl)
+breast_result_X2Yr_values <- make_template_values(breast_X2Yr_results) # apply to a list of models
 
 
 
@@ -478,41 +471,27 @@ colorectal_models <- list(base_model) %>%
   parallel_apply(templates[c("o.totalDeath", "o.colorectalDeath"
                              )]) %>% 
   serial_apply(templates[c("c.hliContinuous", "c.seerstage")]) %>% 
-  parallel_apply(templates[c("f.all")]) 
+  parallel_apply(templates[c("f.all",
+                             "f.excludeQtoExit5Year",
+                             "f.excludeQtoDiag2Year")]) 
 
 colorectal_results <- colorectal_models %>% lapply(run_model, dataset=colorectal)
 colorectal_results %<>% lapply(result_prep_tpl)
 colorectal_result_values <- make_template_values(colorectal_results) # apply to a list of models
 
-colorectal_results_stop3Yr <- colorectal_models %>% lapply(run_model, dataset=colorectalX3YrNewCases)
-colorectal_results_stop3Yr %<>% lapply(result_prep_tpl)
-colorectal_result_values_stop3Yr <- make_template_values(colorectal_results_stop3Yr) # apply to a list of models
 
-
-
-colorectal_X1Yr_models <- list(base_model) %>% 
+colorectal_X2Yr_models <- list(base_model) %>% 
   parallel_apply(templates[c("d.crccohort")]) %>%
-  parallel_apply(templates[c(
-                             "o.exclude1YearTotalDeath", "o.exclude1YearColorectalDeath")]) %>% 
+  parallel_apply(templates[c("o.exclude2YearTotalDeath", "o.exclude2YearColorectalDeath")]) %>% 
   serial_apply(templates[c("c.hliContinuous", "c.seerstage")]) %>% 
-  parallel_apply(templates[c("f.exclude1Year")]) 
+  parallel_apply(templates[c("f.excludeDiagtoEnd2Year")]) 
 
-colorectal_X1Yr_results <- colorectal_X1Yr_models %>% lapply(run_model, dataset=colorectalX1Yr)
-colorectal_X1Yr_results %<>% lapply(result_prep_tpl)
-colorectal_X1Yr_result_values <- make_template_values(colorectal_X1Yr_results) 
+colorectal_X2Yr_results <- colorectal_X2Yr_models %>% lapply(run_model, dataset=colorectal)
+colorectal_X2Yr_results %<>% lapply(result_prep_tpl)
+colorectal_X2Yr_result_values <- make_template_values(colorectal_X2Yr_results) 
 
 
 
-colorectal_X3Yr_models <- list(base_model) %>% 
-  parallel_apply(templates[c("d.crccohort")]) %>%
-  parallel_apply(templates[c(
-    "o.exclude3YearTotalDeath", "o.exclude3YearColorectalDeath")]) %>% 
-  serial_apply(templates[c("c.hliContinuous", "c.seerstage")]) %>% 
-  parallel_apply(templates[c("f.exclude3Year")]) 
-
-colorectal_X3Yr_results <- colorectal_X3Yr_models %>% lapply(run_model, dataset=colorectalX3Yr)
-colorectal_X3Yr_results %<>% lapply(result_prep_tpl)
-colorectal_X3Yr_result_values <- make_template_values(colorectal_X3Yr_results) 
 
 # HLI categorical
 colorectal_cat_models <- list(base_model) %>% 
@@ -573,41 +552,24 @@ lung_models <- list(base_model) %>%
   parallel_apply(templates[c("d.lccohort")]) %>%
   parallel_apply(templates[c("o.totalDeath", "o.lungDeath")]) %>% 
   serial_apply(templates[c("c.hliContinuous", "c.seerstage")]) %>% 
-  parallel_apply(templates[c("f.all")]) 
+  parallel_apply(templates[c("f.all",
+                             "f.excludeQtoExit5Year",
+                             "f.excludeQtoDiag2Year")]) 
 
 lung_results <- lung_models %>% lapply(run_model, dataset=lung)
 lung_results %<>% lapply(result_prep_tpl)
 lung_result_values <- make_template_values(lung_results) # apply to a list of models
 
 
-lung_results_stop3Yr <- lung_models %>% lapply(run_model, dataset=lungX3YrNewCases)
-lung_results_stop3Yr %<>% lapply(result_prep_tpl)
-lung_result_values_stop3Yr <- make_template_values(lung_results_stop3Yr) # apply to a list of models
-
-
-lung_X1Yr_models <- list(base_model) %>% 
+lung_X2Yr_models <- list(base_model) %>% 
   parallel_apply(templates[c("d.lccohort")]) %>%
-  parallel_apply(templates[c( 
-                             "o.exclude1YearTotalDeath", "o.exclude1YearLungDeath")]) %>% 
+  parallel_apply(templates[c("o.exclude2YearTotalDeath", "o.exclude2YearLungDeath")]) %>% 
   serial_apply(templates[c("c.hliContinuous", "c.seerstage")]) %>% 
-  parallel_apply(templates[c("f.exclude1Year")]) 
+  parallel_apply(templates[c("f.excludeDiagtoEnd2Year")]) 
 
-lung_X1Yr_results <- lung_X1Yr_models %>% lapply(run_model, dataset=lungX1Yr)
-lung_X1Yr_results %<>% lapply(result_prep_tpl)
-lung_X1Yr_result_values <- make_template_values(lung_X1Yr_results)
-
-
-lung_X3Yr_models <- list(base_model) %>% 
-  parallel_apply(templates[c("d.lccohort")]) %>%
-  parallel_apply(templates[c( 
-    "o.exclude3YearTotalDeath", "o.exclude3YearLungDeath")]) %>% 
-  serial_apply(templates[c("c.hliContinuous", "c.seerstage")]) %>% 
-  parallel_apply(templates[c("f.exclude3Year")]) 
-
-lung_X3Yr_results <- lung_X3Yr_models %>% lapply(run_model, dataset=lungX3Yr)
-lung_X3Yr_results %<>% lapply(result_prep_tpl)
-lung_X3Yr_result_values <- make_template_values(lung_X3Yr_results)
-
+lung_X2Yr_results <- lung_X2Yr_models %>% lapply(run_model, dataset=lung)
+lung_X2Yr_results %<>% lapply(result_prep_tpl)
+lung_X2Yr_result_values <- make_template_values(lung_X2Yr_results)
 
 
 # HLI categorical
@@ -820,7 +782,7 @@ bc_td_intx <- coxph(Surv(followUpTimeDays, totalDeath) ~ hliScore +
         familyHistBC +
         parity +
         breastfeeding +
-        hliScore*lagYearsMedian,
+        hliScore*lagYears,
       data = breast
 )
 
@@ -1388,17 +1350,17 @@ bc_bcd_lagintx_rcs_plot <- ggplot(bc_bcd_lagintx_rcs_delta, aes(x = Value, y = H
 
 # colorectal cancer
 
-crc_td_lagintx_rcs_model <- cph(Surv(followUpTimeDays, totalDeath) ~ hliScore*rcs(lagYears, 3) + 
-                          ageDiagnosis + 
+crc_td_lagintx_rcs_model <- cph(Surv(followUpTimeDays, totalDeath) ~ hliScore*rcs(ageDiagnosis, 3) + 
+                          #ageDiagnosis + 
                           education + 
                           height +
                           strat(wave) +
                           strat(seerStage), 
                         data=colorectal)
 
-crc_td_lagintx_rcs_delta <- intEST(var2values = c(0:25),
+crc_td_lagintx_rcs_delta <- intEST(var2values = c(40:90),
                                    model = crc_td_lagintx_rcs_model,
-                                   data = colorectal, var1 = "hliScore", var2 = "lagYears",
+                                   data = colorectal, var1 = "hliScore", var2 = "ageDiagnosis",
                                    ci=TRUE, conf = 0.95, ci.method = "delta")
 crc_td_lagintx_rcs_plot <- ggplot(crc_td_lagintx_rcs_delta, aes(x = Value, y = HR)) + 
   geom_line(linewidth = 0.75) +
@@ -1407,7 +1369,7 @@ crc_td_lagintx_rcs_plot <- ggplot(crc_td_lagintx_rcs_delta, aes(x = Value, y = H
   theme(panel.grid.minor=element_blank(), plot.title = element_text(size=12)) +
   geom_ribbon(aes(ymin = CI_L, ymax = CI_U), alpha= 0.1) +
   labs(x = "Prediagnostic interval (years)", y = "HR all-cause mortality", title = "Colorectal cancer cases") +
-  scale_x_continuous(breaks = seq(0, 25, by = 2), limits = c(0,24)) +
+  #scale_x_continuous(breaks = seq(0, 25, by = 2), limits = c(0,24)) +
   scale_y_continuous(breaks = scales::breaks_width(0.05)) 
 
 
